@@ -1,7 +1,3 @@
-import React from 'react';
+import HeatMap from './HeatMap';
 
-const MyComponent = () => (
-    <h1>Hello from Component</h1>
-);
-
-export default MyComponent;
+export default HeatMap;
