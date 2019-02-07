@@ -41,7 +41,7 @@ export function Palette(palette, min, max, gradient) {
       this.values.push(max);
       this.colors.push(this.colors[this.colors.length-1])
     }
-    this.percentages = this.values.map(value => (value-min)/(max-min));
+    this.percentages = this.values.map(value => (value-this.values[0])/(this.values[this.values.length-1]-this.values[0]));
   }
 }
 

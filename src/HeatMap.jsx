@@ -22,13 +22,12 @@ const scalingStyle = (scaling, val, min, max) => {
   }
 };
 
-const colorStyle = (color) => ({backgroundColor: color.rgb().string()})
+const backgroundStyle = color => ({backgroundColor: color.rgb().string()})
 
 const Container = styled.div(
   {
     display: 'flex',
     alignItems: 'center',
-    flexDirection: props => directionMap[props.legend]
   }
 );
 
@@ -37,45 +36,52 @@ const Grid = styled.div({
 });
 
 const Legend = styled.div({
-  height: '100%',
-  background: props => props.legend.colors[0],
-});
+  display: 'flex',
+})
+
+const Gradient = styled.div( props => ({
+  height: '80%',
+  width: '10px',
+  background: `linear-gradient(${props.palette.colors.map((color, i)=>(
+    color+' '+props.palette.percentages[i]*100+'%')).join(', ')})`,
+}));
 
 const Shape = styled.div(
   {
+    boxSizing: 'border-box',
     position: 'absolute',
     left: '50%',
     top: '50%',
     transform: 'translate(-50%,-50%)',
     zIndex: -1,
   },
-  props => props.colorStyle,
-  props => props.rounded && { borderRadius: '999rem'},
+  props => props.backgroundStyle,
   props => props.scalingStyle,
   props => props.customStyle
 );
 
 const Cell = styled.div(
-  {
+  props => ({
     position: 'relative',
     display: 'flex',
     alignSelf: 'center',
     alignItems: 'center',
+    color: props.darkBg ? props.lightText || 'white' : props.darkText,
     justifyContent: 'center',
-  },
+    '&:hover div': {
+      border: '2px solid rgba(0,0,0,0.5)'
+    },
+  }),
   props => props.customStyle
 );
 
-const LabelX = styled.div(
+const LabelX = styled.div(props => (
   {
-    order: props => props.opposite ? 0 : 9999,
-  },
-  props => props.customStyle
-);
+    order: props.opposite ? 0 : 9999,
+  }
+));
 
-const LabelY = styled.div(
-  props => props.labelYStyles
-);
+
 
 
 const HeatMap = (
@@ -116,6 +122,16 @@ const HeatMap = (
   const paletteMax = zLength ? max[colors.valuesIndex] : max;
   const palette = new Palette(colors.palette, paletteMin, paletteMax, colors.gradient)
 
+  const getTooltipDataAttrs = (val) => {
+    if (val === null) return null;
+    const { tooltipDataAttrs } = shape;
+
+    if (typeof tooltipDataAttrs === 'function') {
+      return tooltipDataAttrs(val);
+    }
+    return tooltipDataAttrs;
+  }
+
   const heatmapColStyle = {
     display: 'flex',
     flexDirection: 'column',
@@ -133,7 +149,7 @@ const HeatMap = (
 
   return(
     <Container legend={legend && legend.position}>
-
+      <div data-tip="hhhh">hoi</div>
       <Grid>
         <div className={`${namespace}y-labels ${namespace}col`} style={heatmapYStyle}>
           <div className={`${namespace}xy`} />
@@ -142,25 +158,29 @@ const HeatMap = (
         {xAxis.labels.map((label,ix)=>(
           <div key={ix} className={`${namespace}col`} style={heatmapColStyle}>
             {xAxis.dangerousLabels ? (
-              <LabelX opposite={xAxis.opposite} dangerouslySetInnerHTML={{__html: label}} className={`${namespace}x-label`} customStyle={xAxis.customStyle}/>
+              <LabelX opposite={xAxis.opposite} dangerouslySetInnerHTML={{__html: label}} className={`${namespace}x-label`} customStyle={xAxis.customStyle} />
             ) : (
-              <LabelX opposite={xAxis.opposite} className={`${namespace}x-label`} customStyle={xAxis.customStyle}>{label}</LabelX>
+              <LabelX opposite={xAxis.opposite} className={`${namespace}x-label`} customStyle={xAxis.customStyle} >{label}</LabelX>
             )}
             {yAxis.labels.map((_,iy) => {
               const val = data[iy][ix];
+              const color = val !== null ? palette.getColor(zLength ? val[colors.valuesIndex]: val) : null;
               return(
-                <Cell 
+                <Cell
                   key={iy} 
-                  className={`${namespace}cell ${namespace}cell-${ix}-${iy}`} 
+                  className={`${namespace}cell ${namespace}cell-${ix}-${iy}`}
+                  darkBg={color && color.isDark()}
+                  lightText={cell.lightText}
+                  darkText={cell.darkText}
                   customStyle={cell.customStyle && cell.customStyle}
                   onClick={val !== null ? (e)=>handleCellClick(e, val) : undefined }
+                  {...getTooltipDataAttrs(val)}
                 >
                   {val !== null && cell && cell.content && cell.content(val)}
                   {val !== null && shape && (
                     <Shape
-                      colorStyle={colorStyle(palette.getColor(zLength ? val[colors.valuesIndex]: val))} 
+                      backgroundStyle={backgroundStyle(color)} 
                       scalingStyle={scalingStyle(shape.scaling, val, min, max)}
-                      rounded={shape.rounded}
                       customStyle={shape.customStyle instanceof Function && shape.customStyle(val, min, max)} 
                     />
                   )}
@@ -172,9 +192,11 @@ const HeatMap = (
       </Grid>
 
       {legend && (
-        <Legend palette={palette.getLegend()}>
-          {palette.getLegend().colors[0]}
+        <Legend>
+          <Gradient palette={palette.getLegend()} />
+          
         </Legend>
+       
       )}
 
     </Container>
@@ -242,11 +264,13 @@ HeatMap.propTypes = {
     onMouseOver: PropTypes.func, // MouseOver handler for cell, takes `event` and `val` (number or array when 3D)
     onMouseLeave: PropTypes.func, // MouseLeave handler for cell, takes `event` and `val` (number or array when 3D)
     onClick: PropTypes.func, // Click handler for cell, takes `event` and `val` (number or array when 3D)
+    lightText: PropTypes.string, // Color when shape background is dark, defaults to 'white'
+    darkText: PropTypes.string, // Color when shape background is light, no default ('')
   }),
   shape: PropTypes.shape({
     scaling: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]), // Use value to scale shape: true for 2D array or index number for 3D array
-    rounded: PropTypes.bool, // Display shape as circle or rounded rectangle
     customStyle: PropTypes.func, // Take `val`, `min`, `max` (=number or array when 3D) and generate shape styles to merge.
+    tooltipDataAttrs: PropTypes.oneOfType([PropTypes.object, PropTypes.func]), // data attributes to add to shape for setting 3rd party tooltips, e.g. { 'data-toggle': 'tooltip' } for bootstrap tooltips
   }),
   colors: PropTypes.shape({ // Palette with color stops instead of single color
     valuesIndex: PropTypes.number, // Index number of dataset to use. Can be omitted for 2D array

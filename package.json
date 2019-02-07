@@ -47,6 +47,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-tooltip": "^3.9.2",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.1",
     "webpack-cli": "^3.2.3",
