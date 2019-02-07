@@ -2,7 +2,7 @@ import React from 'react';
 import { render} from 'react-dom';
 import ReactTooltip from 'react-tooltip';
 
-import HeatMap from '../../src';
+import HeatMap from '../../src/Container';
 
 const App = () => (
   <div>
@@ -38,7 +38,7 @@ const App = () => (
         {value: 0.5, color: '#208FC6'},
         {value: 1, color: '#FFFFDA'},
       ],
-      gradient: true,
+      gradient: false,
     }}
     shape={{  
       scaling: 1,

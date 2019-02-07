@@ -64,7 +64,6 @@ Palette.prototype.getColor = function(value){
 }
 
 Palette.prototype.getLegend = function(){
-  console.log(this.colors.map(color=>color.rgb().string())[0])
   return {
     colors: this.colors.map(color=>color.rgb().string()),
     values: this.values,

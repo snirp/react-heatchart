@@ -1,3 +1,3 @@
-import HeatMap from './HeatMap';
+import Container from './Container';
 
-export default HeatMap;
+export default Container;

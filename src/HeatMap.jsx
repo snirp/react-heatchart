@@ -82,10 +82,18 @@ const LabelX = styled.div(props => (
 ));
 
 
-
-
-const HeatMap = (
-  {data:{data, valuesLength, customMin, customMax}, namespace, xAxis, yAxis, colors, cell, shape, legend}) => {
+const HeatMap = ( 
+    {data:{data, valuesLength, customMin, customMax}, 
+    namespace, 
+    xAxis, 
+    yAxis, 
+    colors, 
+    cell, 
+    shape, 
+    legend, 
+    mouseLeave, 
+    mouseOver}
+  ) => {
   
   // Treat zLength as a fallback if first data cell is null
   const zLength = Array.isArray(data[0][0]) ?  data[0][0].length : valuesLength;
@@ -174,6 +182,8 @@ const HeatMap = (
                   darkText={cell.darkText}
                   customStyle={cell.customStyle && cell.customStyle}
                   onClick={val !== null ? (e)=>handleCellClick(e, val) : undefined }
+                  onMouseOver={e => mouseOver(e,val)}
+                  onMouseLeave={e => mouseLeave(e)}
                   {...getTooltipDataAttrs(val)}
                 >
                   {val !== null && cell && cell.content && cell.content(val)}
@@ -214,6 +224,9 @@ HeatMap.defaultProps = {
     opposite: false,
     dangerousLabels: false,
   },
+  legend: {
+    position: 'bottom',
+  }
 };
 
 HeatMap.propTypes = {
