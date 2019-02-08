@@ -9,9 +9,11 @@ var Color = require('color');
  * @param {number} min - Mininum value from dataset
  * @param {number} max - Maximum value from dataset
  * @param {bool} gradient - Return gradient or rounded colors
+ * @param {number|undefined} index - Index number for 3d array
  */
-export function Palette(palette, min, max, gradient) {
+export function Palette(palette, min, max, gradient, index) {
   this.gradient = gradient;
+  this.index = index;
 
   // Catch single-color palette for performance
   if (typeof palette === 'string'){
@@ -45,8 +47,13 @@ export function Palette(palette, min, max, gradient) {
   }
 }
 
-Palette.prototype.getColor = function(value){
+Palette.prototype.getColor = function(val){
+  if (val === null) return null;
+
   if (this.mono) return mono;
+
+  const value = Array.isArray(val) ? val[this.index] : val;
+  
   // Lineair search through sorted array
   let i = 0;
   let j = 1;
@@ -64,10 +71,9 @@ Palette.prototype.getColor = function(value){
 }
 
 Palette.prototype.getLegend = function(){
-  return {
-    colors: this.colors.map(color=>color.rgb().string()),
-    values: this.values,
-    percentages: this.percentages,
-    gradient: this.gradient
-  }
+  return this.colors.map((color,i) => ({
+    color,
+    value: this.values[i],
+    percentage: this.percentages[i]
+  }))
 }
