@@ -124,7 +124,7 @@ Container.defaultProps = {
   legend: {
     size: '500px',
     display: true,
-    position: 'top',
+    position: 'bottom',
     alignment: 'center',
   }
 };

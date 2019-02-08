@@ -40,7 +40,12 @@ const Gradient = styled.div(props=>({
 const Label = styled.div(props=>({
   position: 'absolute',
   width: 40,
-  left: props.horizontal ? valueRatio(props.value, props.values)*100+'%' : 0,
+  height: 12,
+  marginTop: props.horizontal ? 0 : -6,
+  marginLeft: props.horizontal ? -20 : 0,
+  textAlign: props.horizontal ? 'center': 'left',
+  top: props.horizontal ? indicatorWidth+gradientWidth+5 : (1-valueRatio(props.value, props.values))*100+'%',
+  left: props.horizontal ? valueRatio(props.value, props.values)*100+'%' : indicatorWidth+gradientWidth+5,
 }))
 
 export default ({alignment, horizontal, size, value, palette}) => {
@@ -56,7 +61,9 @@ export default ({alignment, horizontal, size, value, palette}) => {
           values={palette.values}
         />
       )}
-
+      {palette.values.map(value=>(
+        <Label horizontal={horizontal} value={value} values={palette.values}>{value}</Label>
+      ))}
     </Container>
   )
 }
