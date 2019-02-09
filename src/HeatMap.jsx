@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import {Palette} from './utilities'
-
 const scalingStyle = (scaling, val, min, max) => {
   if (scaling === false || scaling === undefined) {
     return {
@@ -39,12 +37,6 @@ const Legend = styled.div({
   display: 'flex',
 })
 
-// const Gradient = styled.div( props => ({
-//   height: '80%',
-//   width: '10px',
-//   background: `linear-gradient(${props.palette.colors.map((color, i)=>(
-//     color+' '+props.palette.percentages[i]*100+'%')).join(', ')})`,
-// }));
 
 const Shape = styled.div(
   {
@@ -136,11 +128,11 @@ const HeatMap = ({
             <LabelX opposite={xAxis.opposite} className={`${namespace}x-label`} customStyle={xAxis.customStyle} >{label}</LabelX>
           )}
           {yAxis.labels.map((_,iy) => {
-            const val = data[iy][ix];
+            const val = data[ix][iy];
             const color = palette.getColor(val);
             return(
               <Cell
-                key={iy} 
+                key={iy}
                 className={`${namespace}cell ${namespace}cell-${ix}-${iy}`}
                 darkBg={color && color.isDark()}
                 lightText={cell.lightText}
@@ -167,8 +159,6 @@ const HeatMap = ({
     </Grid>
   );
 };
-
-
 
 
 export default HeatMap;

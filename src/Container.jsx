@@ -42,9 +42,9 @@ export default class Container extends React.Component {
         // include custom min and max values
         if (this.min[z] !== null) flatZ.push(this.min[z]);
         if (this.max[z] !== null) flatZ.push(this.max[z]);
-        for(let y=0; y<data.length; y++){
-          for(let x=0; x<data[y].length; x++){
-            if (data[y][x] !== null) flatZ.push(data[y][x][z]);
+        for(let x=0; x<data.length; x++){
+          for(let y=0; y<data[x].length; y++){
+            if (data[x][y] !== null) flatZ.push(data[x][y][z]);
           }
         }
         this.min[z] = Math.min(...flatZ);
@@ -65,6 +65,8 @@ export default class Container extends React.Component {
     const paletteMin = this.zLength ? this.min[colors.valuesIndex] : this.min;
     const paletteMax = this.zLength ? this.max[colors.valuesIndex] : this.max;
     this.palette = new Palette(colors.palette, paletteMin, paletteMax, colors.gradient, colors.valuesIndex)
+    console.log(this.palette.values)
+    console.log(this.palette.colors)
   }
 
   handleMouseOver = (e,val) => (
@@ -98,10 +100,10 @@ export default class Container extends React.Component {
         />
         {this.props.legend.display && (
           <Legend
-            horizontal={['top', 'bottom'].includes(this.props.legend.position)}
             alignment={this.props.legend.alignment}
+            horizontal={['top', 'bottom'].includes(this.props.legend.position)}
             size={this.props.legend.size}
-            value={this.state.activeVal !== null && this.state.activeVal[this.props.colors.valuesIndex]}
+            value={this.state.activeVal === null ? null : this.state.activeVal[this.props.colors.valuesIndex]}
             palette={this.palette}
           />
         )}

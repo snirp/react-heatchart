@@ -4,7 +4,6 @@ import styled from '@emotion/styled'
 const Container = styled.div(props => ({
   display: 'flex',
   flexDirection: props.horizontal ? 'row' : 'column-reverse',
-  alignSelf: props.alignment,
 }))
 
 const Item = styled.div({
@@ -25,8 +24,8 @@ const Label = styled.div({
   alignItems: 'center',
 })
 
-export default ({alignment, horizontal, size, value, palette}) => (
-  <Container horizontal={horizontal} alignment={{center: 'center', start: 'flex-start', end: 'flex-end'}[alignment] || 'center'}>
+export default ({horizontal, palette}) => (
+  <Container horizontal={horizontal}>
     {palette.getLegend().map(({color,value}, i)=>(
       <Item key={i}>
         <Swatch color={color}/>

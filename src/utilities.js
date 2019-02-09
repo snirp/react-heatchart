@@ -9,24 +9,16 @@ var Color = require('color');
  * @param {number} min - Mininum value from dataset
  * @param {number} max - Maximum value from dataset
  * @param {bool} gradient - Return gradient or rounded colors
- * @param {number|undefined} index - Index number for 3d array
+ * @param {number|undefined} index - Index number for values array
  */
 export function Palette(palette, min, max, gradient, index) {
   this.gradient = gradient;
   this.index = index;
 
-  // Catch single-color palette for performance
-  if (typeof palette === 'string'){
-    this.mono = Color(palette);
-
-  // Same for single-item array
-  } else if (palette.length === 1){
-    this.mono = Color(palette[0])
-
   // Without stop values, assume equal distribution of stops
-  } else if (typeof palette[0] === 'string') { 
-    this.colors = palette;
-    this.percentages = palette.map((_, i) => i/palette.length)
+  if (typeof palette[0] === 'string') { 
+    this.colors = palette.map(s => Color(s));
+    this.percentages = palette.map((_, i) => i/(palette.length-1))
     this.values = this.percentages.map(perc => (max-min)*perc + min)
 
   // Use stop values to generate palette
@@ -50,15 +42,13 @@ export function Palette(palette, min, max, gradient, index) {
 Palette.prototype.getColor = function(val){
   if (val === null) return null;
 
-  if (this.mono) return mono;
-
   const value = Array.isArray(val) ? val[this.index] : val;
   
   // Lineair search through sorted array
   let i = 0;
   let j = 1;
   for(; j < this.values.length; j++){
-    if (value < this.values[j]) break;
+    if (value <= this.values[j]) break;
     i = j;
   }
   let ratio = (value-this.values[i])/(this.values[j]-this.values[i]);

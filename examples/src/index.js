@@ -9,8 +9,11 @@ const App = () => (
     <HeatMap
     data={{
       data:[
-        [null,null,[0.001,20],[0.3,22]],
-        [[0.2,17],[0.999,15],[0.4,20],[0.6,10]],
+        [null,null,[0.9,20],[0,22]],
+        [[-0.2,17],[1.2,15],[0.4,20],[0.6,10]],
+        [[0.1,11],[0.7,29],[0.3,27],[0.1,43]],
+        [null,null,[0.9,20],[0,22]],
+        [[-0.2,17],[1.2,15],[0.4,20],[0.6,10]],
         [[0.1,11],[0.7,29],[0.3,27],[0.1,43]],
       ],
       customMin: [null, 0],
@@ -18,10 +21,10 @@ const App = () => (
     }}
     namespace={'heatmap-'}
     xAxis={{
-      labels: ['een', 'twee', 'nummer drie', 'vier']
+      labels: ['een', 'twee', 'nummer drie', 't', 'fsfd', 'ffdfd']
     }}
     yAxis={{
-      labels: ['a', 'beeee', 'c']
+      labels: ['a', 'beeee', 'c', 'boep']
     }}
     cell={{
       // content: (val) => String(val[0]),
@@ -42,7 +45,7 @@ const App = () => (
     }}
     shape={{  
       scaling: 1,
-      rounded: true,
+      // rounded: true,
       tooltipDataAttrs: val => ({'data-tip': `value = ${val[0]}`}),
       customStyle: (val, min, max) => ({
         borderRadius: '999rem',
